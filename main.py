@@ -1,13 +1,25 @@
-from flask import Flask, request, redirect, render_template
+from flask import Flask, request, redirect, render_template, session
 from flask_sqlalchemy import SQLAlchemy
 
 
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://build-a-blog:launchcode@localhost:8889/build-a-blog'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://blogz:launchcode@localhost:8889/blogz'
 app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
+
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(120))
+    password = db.Column(db.String(120))
+    blogs = db.relationship('Blog', backref='owner')
+    def __init__(self, username, password):
+        self.username = username
+        self.password = password
+
+
 
 class Blog(db.Model):
 
@@ -15,12 +27,15 @@ class Blog(db.Model):
     title = db.Column(db.String(120))
     body = db.Column(db.String(300))
     completed = db.Column(db.Boolean)
+    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
-    def __init__(self, title, body):
+
+    def __init__(self, title, body, owner):
+        
         self.title = title
         self.body = body
         self.completed = True
-
+        self.owner = owner  
 
 @app.route('/blog', methods=['POST', 'GET'])
 def index():
@@ -54,13 +69,36 @@ def blogpost():
 
     return render_template('blogpost.html', title=title, body=body)
 
+@app.route('/login', methods=['POST', 'GET'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        user = User.query.filter_by(username=username).first()
+
+
+
+#@app.route('/signup', methods=['POST', 'GET'])
+#def signup():
+    #if request.method == 'POST':
+
+
+
+
+
+@app.route
+
+
+
+
+
+
 
 #def is_empty(text):
     #if text == "":
         #return True
     #else:
         #return False
-
 
 @app.route('/newpost', methods=['POST', 'GET'])
 def new_blog():
@@ -84,7 +122,7 @@ def new_blog():
         
     
         if not title_error and not body_error:
-            new_blog = Blog(title, body)
+            new_blog = Blog(title, body, owner)
             db.session.add(new_blog)
             db.session.commit()   
 
@@ -115,4 +153,4 @@ def new_blog():
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run() 

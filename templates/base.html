@@ -1,14 +1,34 @@
 <!doctype html>
 <html>
     <head>
-        <title>{{title}}</title>
+        <title>Blogz</title>
+        
     </head>
 <body>
-        <div class="nav">
-                <a href="/blog">Completed Blogs</a>
-                <br>
-                <a href="/newpost">Add New Blog Entry</a>
-    </div>
+    <nav>
+        
+            <ul>
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    <li>
+                        <a href="/blogpost">All Posts</a>
+                    </li>
+                    <li>
+                        <a href="/newpost">New Post</a>
+                    </li>
+                </ul>
+            <ul id="user-account">
+            <li>
+                <a href="/login">Login</a>
+            </li>
+            <li>
+                <a href="/logout">Logout</a>
+            </li>
+        </ul>
+        
+    </nav>
+    
 
 
     {% block content %}
