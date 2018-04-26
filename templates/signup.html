@@ -12,25 +12,25 @@
 <h2>SignUp</h2>
 
     
-    <form action="/validate-user" method='POST'>
+    <form action="/signup" method='POST'>
         <table>
         <tbody>
         <tr>
         <td>
-        <label for="user">Username</label>
+        <label for="username">Username</label>
         </td>
         <td>
-        <input id="user" type="text" name= "user" value={{user}} />
-        <span class="error">{{user_error}}</span>
+        <input id="username" type="text" name= "username" value={{username}} />
+        <span class="error">{{username_error}}</span>
         </td>
         </tr>
         <tr>
         <td>
-        <label for="passwrd">Password</label>
+        <label for="password">Password</label>
         </td>
         <td>
-        <input id="passwrd" type="password" name= "passwrd" value={{passwrd}}/>
-        <span class="error">{{passwrd_error}}</span>
+        <input id="password" type="password" name= "password" value={{password}}/>
+        <span class="error">{{password_error}}</span>
         </td>
         </tr>
         <tr>
@@ -42,18 +42,9 @@
         <span class="error">{{verify_error}}</span>
         </td>
         </tr>
-        <tr>
-        <td>
-        <label for="email">Email (optional)</label>
-        </td>
-        <td>
-        <input id="email" type="text" name= "email" value={{email}} />
-        <span class="error">{{email_error}}</span>
-        </td>
-        </tr>
         </tbody>
         </table>
-    <input type="submit"> </input>
+    <input type="submit" value="Signup"> </input>
     </form>
 </body>
 

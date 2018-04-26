@@ -28,7 +28,11 @@
         </ul>
         
     </nav>
-    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category,message in messages %}
+            <p><em class="{{category}}">{{message}}</em></p>
+        {% endfor %}
+        {% endwith %}
 
 
     {% block content %}
