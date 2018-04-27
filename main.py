@@ -8,6 +8,7 @@ app.config['DEBUG'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://blogz:launchcode@localhost:8889/blogz'
 app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
+app.secret_key = "#someSecretString"
 
 
 class User(db.Model):
@@ -47,7 +48,7 @@ class Blog(db.Model):
 
 
 @app.route('/blog', methods=['POST', 'GET'])
-def index():
+def home():
     #if request.method == 'POST':
         #blog_name = request.form['new_blog']
         #blog_title = request.form['title']
@@ -68,7 +69,7 @@ def index():
 #def new_blog():
     #return render_template('newpost.html')
 
-@app.route("/blogpost", methods=['GET'])
+@app.route("/blogpost", methods=['GET', 'POST'])
 def blogpost():
     if request.args.get('id'):
         blog_id = request.args.get('id')
@@ -85,8 +86,8 @@ def blogpost():
         return render_template('user.html', posts=posts, user=user)
     
     if request.method == 'POST':
-        blog_title = request.form['blog_entry_title']
-        blog_content = request.form['blog_entry_content']
+        blog_title = request.form['title']
+        blog_content = request.form['body']
 
         if not blog_title or not blog_content:
             flash('Please fill in both fields', 'error')
@@ -117,13 +118,19 @@ def blogpost():
 
     #return render_template('blogpost.html', title=title, body=body)
 
+@app.before_request
+def require_login():
+    allowed_routes = ['login', 'signup', 'index', 'blog']
+    if request.endpoint not in allowed_routes and 'username' not in session:
+        return redirect('/login')
+
 @app.route('/login', methods=['POST', 'GET'])
 def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
         user = User.query.filter_by(username=username).first()
-        login_username_error = ""
+        login_error = ""
 
         if user and user.password == password:
             session['username'] = username
@@ -163,7 +170,7 @@ def signup():
             return render_template("signup.html", username_error=username_error)
 
         if len(password) < 3 or len(password) > 20:
-            flash('Please enter a password between 3 and 50 chr')
+            flash('Please enter a password between 3 and 50 characters')
             return render_template("signup.html", password_error=password_error)
 
         if " " in password:
@@ -171,7 +178,7 @@ def signup():
             return render_template("signup.html", password_error=password_error)
 
         if password != verify:
-            flash('passowords dont match')
+            flash('passwords dont match')
             return render_template("signup.html", verify_error=verify_error)
 
         existing_user = User.query.filter_by(username=username).first()
@@ -185,7 +192,7 @@ def signup():
             user_exists_error = "Username already exists"
             return render_template("signup.html", user_exists_error=user_exists_error)
 
-    return render_template('signup.html', username_error=username_error, password_error=password_error, verify_password_error=verify_password_error)
+    return render_template('signup.html', username_error=username_error, password_error=password_error, verify_error=verify_error)
 
 
 @app.route('/logout')
@@ -197,16 +204,14 @@ def logout():
 
 
 
-#@app.route('/', methods=['POST', 'GET'])
-#def index():
 
-    #users = User.query.all()
-    #return render_template('index.html', users=users)
 
 
 
 @app.route('/newpost', methods=['POST', 'GET'])
 def new_blog():
+    owner = User.query.filter_by(username=session['username']).first()
+    
     if request.method == 'GET':
         return render_template('newpost.html')
 
@@ -246,7 +251,11 @@ def new_blog():
         
 
     
+@app.route('/', methods=['POST', 'GET'])
+def index():
 
+    users = User.query.all()
+    return render_template('index.html', users=users)
 
     #blog_id = int(request.form['new_blog'])
     #blog = Blog.query.get(blog_id)
