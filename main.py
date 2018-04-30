@@ -82,7 +82,7 @@ def blogpost():
     if request.args.get('user'):
         username = request.args.get('user')
         user = User.query.filter_by(username=username).first()
-        posts = user.blogs
+        posts = Blog.query.filter_by(owner=user).all()
         return render_template('user.html', posts=posts, user=user)
     
     if request.method == 'POST':
@@ -120,7 +120,7 @@ def blogpost():
 
 @app.before_request
 def require_login():
-    allowed_routes = ['login', 'signup', 'index', 'blog']
+    allowed_routes = ['login', 'signup', 'index', 'blog', 'user']
     if request.endpoint not in allowed_routes and 'username' not in session:
         return redirect('/login')
 
@@ -213,7 +213,7 @@ def new_blog():
     owner = User.query.filter_by(username=session['username']).first()
     
     if request.method == 'GET':
-        return render_template('newpost.html')
+        return render_template('newpost.html', owner = owner)
 
     if request.method == 'POST':
         body = request.form['body']

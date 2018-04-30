@@ -2,7 +2,7 @@
 
 {% block content %}
 <h1 style = "text-align:center">{{user.username}}'s Blog Posts</h1>
-    {% for blog in completed_blogs %}
+    {% for blog in posts %}
         <h2><a href='/blogpost?id={{blog_id}}'>{{blog.title}}</a></h2>
         <p>{{blog.body}}</p>
         <p><em>Written by <a href='/blogpost?user={{user.username}}'>{{user.username}}</a></em><p>

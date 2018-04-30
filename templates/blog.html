@@ -16,17 +16,15 @@
     <hr />
 
     <h2>Completed Blogs</h2>
-
-    <ul>
+    
+    
         {% for blog in completed_blogs %}
-        <li><a href="/blogpost?id={{blog.id}}">{{blog.title}}</a></li>
-        <li>{{blog.body}}</li>
-            {% for user in users %}
-                {% if blog.owner.id == user.id %}
-                    <p>Written by <a href="/blogpost?user={{user.username}}">{{user.username}}</p>
-                {% endif %}
-            {% endfor %}
+        <p>
+            <tr><a href="/blogpost?id={{blog.id}}">{{blog.title}}</a></tr>
+            <tr>{{blog.body}}</tr><br>
+            <tr>Written by <a href="/blogpost?user={{blog.owner.username}}">{{blog.owner.username}}</tr>
+        </p>
         {% endfor %}
-    </ul>
+    
 
 {% endblock %}
